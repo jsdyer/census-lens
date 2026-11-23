@@ -18,7 +18,7 @@
   "data_info": {
     "mode": "snapshot",
     "detail": "Statistics Canada’s 2021 Census Profile supplies 16 indicators for communities, metropolitan areas, provinces and territories across Canada.",
-    "cadence": "Quarterly source verification",
+    "cadence": "Quarterly",
     "probes": [
       {
         "url": "https://coolcode.ca/census-lens/data/status.json",
