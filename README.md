@@ -35,3 +35,45 @@ A change to the collector, its browser regression check or its Pages workflow tr
 On 2026-11-24, the public source returned HTTP 403 to both download clients on GitHub Linux and macOS runners. The same official source was successfully downloaded and validated from a separate network. The refreshed snapshot was recovered from that verified download; automatic acquisition from GitHub remains blocked until source access is restored. A successful offline Pages build does not establish that the online collector recovered.
 
 To recover from a machine with public source access, run `python3 scripts/refresh.py`, run the tests and build above, then commit `web/data/edition.json.gz` and `web/data/status.json` together. Keep the actual acquisition date; do not advance it after a failed download.
+
+## Publish files downloaded in your browser
+
+The existing local importer reads **all 15** official ZIPs: `001`, `002`, and
+`016` through `028`. Download each through your browser from the bulk download
+links in the [shared manual-import guide](https://github.com/jsdyer/jsdyer.github.io/blob/main/docs/manual-data-import.md#census-lens).
+Keep the contents zipped. Copy the ZIPs into one directory, naming each file exactly
+its three-digit code **without a `.zip` suffix**, for example
+`/root/coolcode-imports/census/001`.
+
+Use files freshly downloaded on the **same UTC date as the import**: this existing
+collector records the import day's UTC date as `retrieved`. It cannot accept a separate
+historical acquisition date. Do not use it to stamp an old saved download as newly
+retrieved. The observation years remain 2016/2021 regardless of the download date.
+
+From an up-to-date checkout, run these commands one at a time and stop if any fails:
+
+```sh
+git pull --ff-only
+python3 scripts/refresh.py --source-dir /root/coolcode-imports/census
+node --test tests/*.test.mjs
+python3 -m unittest discover -s tests -v
+python3 scripts/build.py
+git diff -- web/data/status.json
+git status --short
+git add web/data/edition.json.gz web/data/status.json
+git commit -m 'Import verified browser-downloaded Census Profile files'
+git push origin main
+```
+
+On Windows with Git, Python and Node installed, use `py` instead of `python3`
+and a quoted Windows path for the source directory. Use your existing GitHub login
+for the push. The raw ZIPs stay outside the repo; commit only the two validated output
+files together. The collector checks all inputs and its required geography checks
+before replacing the snapshot.
+
+A data-only push runs the tests and publishes the committed edition without another
+source download. Check the [Pages run](https://github.com/jsdyer/census-lens/actions/workflows/pages.yml)
+and the live [status metadata](https://coolcode.ca/census-lens/data/status.json).
+Do not use **Run workflow** for this publication: that path deliberately attempts a
+new online source download. The watchdog can continue retrying that online collector
+even after manually imported data is successfully published.
