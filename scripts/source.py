@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import sleep
-from urllib.request import Request, urlopen
+from public_download import download_bytes
 from zipfile import ZipFile
 import sys
 
@@ -18,15 +18,7 @@ def rows(code, url=None, profile=False):
     if len(sys.argv) == 3 and sys.argv[1] == '--source-dir':
         source = Path(sys.argv[2]) / code
     else:
-        for attempt in range(3):
-            try:
-                with urlopen(Request(url, headers={'User-Agent': 'CoolCode source verification contact coolcode.ca'}), timeout=160) as response:
-                    source = io.BytesIO(response.read())
-                break
-            except OSError:
-                if attempt == 2:
-                    raise
-                sleep(2 ** attempt)
+        source = io.BytesIO(download_bytes(url, limit=250_000_000, timeout=160))
     with ZipFile(source) as archive:
         name = next(n for n in archive.namelist() if n.endswith('_data.csv')) if profile else code + '.csv'
         with archive.open(name) as data, io.TextIOWrapper(data, encoding='latin-1' if profile else 'utf-8-sig') as text:
