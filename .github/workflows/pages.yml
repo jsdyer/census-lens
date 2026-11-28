@@ -28,8 +28,12 @@ jobs:
           BEFORE: ${{ github.event.before }}
         run: |
           if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null ||
-             ! git diff --quiet "$BEFORE" "$GITHUB_SHA" -- scripts/refresh.py scripts/collect.py scripts/source.py scripts/public_download.py tests/browser_smoke.py .github/workflows/pages.yml; then
+             ! git diff --quiet "$BEFORE" "$GITHUB_SHA" -- scripts/refresh.py scripts/collect.py scripts/source.py scripts/public_download.py tests/browser_smoke.py; then
             echo "refresh=true" >> "$GITHUB_OUTPUT"
+          fi
+          if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null ||
+             ! git diff --quiet "$BEFORE" "$GITHUB_SHA" -- scripts/age_estimates.py scripts/public_download.py; then
+            echo "ages=true" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/setup-python@v6
         with:
@@ -40,6 +44,9 @@ jobs:
       - name: Retrieve and check source files
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || steps.source_changes.outputs.refresh == 'true'
         run: python3 scripts/refresh.py
+      - name: Retrieve July 1 metropolitan population estimates
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || steps.source_changes.outputs.ages == 'true'
+        run: python3 scripts/age_estimates.py
       - name: Test the application
         run: node --test tests/*.test.mjs
       - name: Test the builder
@@ -65,7 +72,7 @@ jobs:
       - name: Check application in a browser
         run: python3 tests/browser_smoke.py
       - name: Save validated source snapshot
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || steps.source_changes.outputs.refresh == 'true')
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || steps.source_changes.outputs.refresh == 'true' || steps.source_changes.outputs.ages == 'true')
         run: |
           git add web/data
           if ! git diff --cached --quiet; then

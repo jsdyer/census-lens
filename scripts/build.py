@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import shutil
+from age_pages import build_ages
 import tempfile
 from urllib.parse import urlsplit
 
@@ -55,6 +56,7 @@ def build(root=ROOT):
         archive = stage / 'data/edition.json.gz'
         (archive.parent / 'edition.json').write_bytes(gzip.decompress(archive.read_bytes()))
         archive.unlink()
+        build_ages(stage)
         index = stage / "index.html"
         page = index.read_text(encoding="utf-8")
         for token, key in {"TITLE": "title", "DESCRIPTION": "description", "TOOL_ID": "id", "SOURCE_URL": "source"}.items():

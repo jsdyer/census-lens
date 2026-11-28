@@ -1,7 +1,7 @@
 {
   "id": "census-lens",
   "title": "Census Lens",
-  "description": "Compare two Canadian communities on population, housing, income, education and language using the 2021 Census.",
+  "description": "Compare 2021 Census community profiles or see how the numbers of children and seniors changed across Canadian metropolitan areas.",
   "category": "explorers",
   "tags": [
     "census",
@@ -17,7 +17,7 @@
   "access": "browser",
   "data_info": {
     "mode": "snapshot",
-    "detail": "Statistics Canada’s 2021 Census Profile supplies 16 indicators for communities, metropolitan areas, provinces and territories across Canada.",
+    "detail": "Statistics Canada’s 2021 Census Profile supplies community indicators. Table 17-10-0148-01 supplies annual July 1 age estimates for metropolitan areas and agglomerations.",
     "cadence": "Quarterly",
     "probes": [
       {
@@ -42,6 +42,19 @@
           "end"
         ],
         "label": "Coverage"
+      },
+      {
+        "url": "https://coolcode.ca/census-lens/data/age-estimates.json",
+        "path": [
+          "checked"
+        ],
+        "label": "Metropolitan estimates checked",
+        "count_at": {
+          "path": [
+            "count"
+          ],
+          "unit": "areas"
+        }
       }
     ]
   }

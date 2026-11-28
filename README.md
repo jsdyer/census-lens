@@ -4,6 +4,7 @@
 
 <!-- coolcode:guide -->
 Search Langley and switch between the district municipality and the city. The 2021 Census reports 132,603 residents in the district municipality and 28,963 in the city. Compare either one with Halifax Regional Municipality, then select median age or the tenant share.
+Metropolitan age profiles compare July 1 population estimates for children and seniors year by year on 2021 boundaries. The release calendar identifies the first scheduled 2026 Census counts.
 <!-- /coolcode:guide -->
 
 Compare any two geographies across the country. The national release includes the country, provinces, territories, census subdivisions, metropolitan areas, agglomerations and their published parts. Search multiple words or a geographic identifier. A place’s full census designation and DGUID appear together in the picker. The source-profile links open the original geography and all census characteristics. You can choose a featured indicator, filter the table by topic, and export the comparison including source symbols.
